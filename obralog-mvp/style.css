@@ -1,0 +1,809 @@
+:root {
+    /* Colors - Updated to match Brand Logo */
+    /* Deep Navy Blue Backgrounds from Logo */
+    --bg-dark: #0b1221;
+    /* Darker, richer navy */
+    --bg-panel: #162032;
+    /* Slightly lighter navy for cards */
+    --bg-glass: rgba(22, 32, 50, 0.7);
+
+    /* Construction Orange from Logo (Primary Action) */
+    --primary: #f97316;
+    /* Vibrant orange */
+    --primary-hover: #ea580c;
+
+    /* Logo Blue (Secondary Brand Color) */
+    --brand-blue: #1e3a8a;
+
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border: #2d3b55;
+    /* Blended border color */
+
+    --success: #10b981;
+    --danger: #ef4444;
+
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+
+    /* Radius */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    /* Changed from height: 100vh and overflow: hidden to allow natural scrolling on mobile */
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Layout */
+#app {
+    display: flex;
+    min-height: 100vh;
+    /* Changed from height: 100% */
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background-color: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-md);
+    transition: all 0.3s ease;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: 3rem;
+}
+
+.logo-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--primary), #60a5fa);
+    border-radius: 8px;
+    display: none;
+    /* Hidden by default if image is present */
+}
+
+.logo img {
+    height: 48px;
+    /* Slightly larger for better visibility */
+    width: auto;
+    object-fit: contain;
+    border-radius: 12px;
+    /* Curves the edges to hide white corners */
+}
+
+.logo h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.nav-links {
+    list-style: none;
+    flex: 1;
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+    min-height: 0;
+    /* Important for flex child scrolling */
+    padding-bottom: 1rem;
+    /* Spacing from bottom active elements */
+    margin-right: -8px;
+    /* Offset for scrollbar visuals if needed */
+    padding-right: 8px;
+}
+
+/* Custom Scrollbar for Sidebar */
+.nav-links::-webkit-scrollbar {
+    width: 4px;
+}
+
+.nav-links::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.nav-links::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.nav-links::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.nav-links li {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+    margin-bottom: 0.5rem;
+}
+
+.nav-links li:hover,
+.nav-links li.active {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--primary);
+}
+
+.nav-links li svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Sidebar Submenu for Projects */
+.sidebar-section-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    margin: 1.5rem 0 0.5rem 1rem;
+    font-weight: 600;
+}
+
+.sidebar-submenu {
+    list-style: none;
+    margin-left: 0.5rem;
+    padding-left: 0.5rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-submenu li {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    color: var(--text-muted);
+}
+
+.sidebar-submenu li:hover,
+.sidebar-submenu li.active {
+    color: white;
+    background: transparent;
+}
+
+.sidebar-submenu li.active {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border);
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    background-color: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.user-profile .info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-profile .name {
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.user-profile .role {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: radial-gradient(circle at top right, #1e3a8a20 0%, var(--bg-dark) 40%);
+    position: relative;
+    /* overflow: hidden; Removed to allow body scroll */
+}
+
+.top-bar {
+    padding: var(--spacing-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-bar h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+#content-area {
+    flex: 1;
+    padding: 0 var(--spacing-lg) var(--spacing-lg);
+    /* overflow-y: auto; Removed internal scroll */
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.2s;
+    font-family: inherit;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+}
+
+/* Cards & Grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.card {
+    background: var(--bg-glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+}
+
+.card h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.card p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.card .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-active {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: var(--success);
+}
+
+/* Timeline Container - General */
+.timeline-container {
+    /* background: var(--bg-glass); Removed to allow flexible layout */
+    /* border-radius: var(--radius-md); */
+    /* padding: var(--spacing-md); */
+}
+
+/* Default vertical line style (if not in split view cards) */
+.timeline-vertical .timeline-item {
+    display: flex;
+    gap: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    border-left: 2px solid var(--border);
+    padding-left: var(--spacing-md);
+    margin-left: 10px;
+    position: relative;
+    background: none;
+    border-radius: 0;
+    border: none;
+    border-left: 2px solid var(--border);
+}
+
+.timeline-vertical .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 0;
+    width: 10px;
+    height: 10px;
+    background: var(--primary);
+    border-radius: 50%;
+}
+
+.timeline-date {
+    min-width: 100px;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.timeline-content h4 {
+    margin-bottom: 0.25rem;
+}
+
+.timeline-content p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Modals */
+.modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--bg-panel);
+    width: 100%;
+    max-width: 500px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease;
+    /* Fix for overflow */
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    /* Header stays fixed */
+}
+
+.modal-body {
+    padding: var(--spacing-md);
+    overflow-y: auto;
+    /* Body content scrolls */
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: white;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.file-upload-area {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.file-upload-area:hover {
+    border-color: var(--primary);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.file-upload-icon {
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.file-upload-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+
+/* Timeline Split View */
+.timeline-view-split {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+    /* height: 100%; Removed fixed height */
+    /* overflow-y: auto; Removed internal scroll */
+    padding-bottom: 2rem;
+}
+
+.project-reference-panel {
+    background: var(--bg-panel);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    /* On mobile, this shouldn't just scroll inside, maybe just show it */
+    max-height: 400px;
+    flex-shrink: 0;
+}
+
+@media (min-width: 900px) {
+    .timeline-view-split {
+        grid-template-columns: 400px 1fr;
+        gap: var(--spacing-lg);
+        overflow: hidden;
+        /* Lock scroll to columns on desktop */
+    }
+
+    .project-reference-panel {
+        height: 100%;
+        max-height: none;
+        overflow-y: auto;
+    }
+
+    /* Make right side scrollable independently on desktop */
+    .timeline-scroll-area {
+        height: 100%;
+        overflow-y: auto;
+    }
+}
+
+.project-image-container {
+    flex: 1;
+    background: #000;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+    min-height: 300px;
+}
+
+.project-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* Keep aspect ratio visible */
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.timeline-scroll-area {
+    /* overflow-y: auto; Removed internal scroll */
+    padding-right: 0;
+    /* height: 100%; Removed fixed height */
+}
+
+/* Document badge updates for panel */
+.project-reference-panel h3 {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: var(--primary);
+}
+
+/* Stages Grid for Checkboxes */
+.stages-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+@media (max-width: 600px) {
+    .stages-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Timeline Media & Actions */
+.timeline-actions {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+}
+
+.timeline-media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.media-item {
+    aspect-ratio: 1;
+    background: var(--bg-panel);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--border);
+}
+
+.media-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.doc-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
+    text-decoration: none;
+}
+
+
+/* Timeline Role Tag */
+.timeline-role-tag {
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.timeline-role-tag.electrician {
+    color: #facc15;
+    background: rgba(250, 204, 21, 0.1);
+}
+
+.timeline-role-tag.plumber {
+    color: #60a5fa;
+    background: rgba(96, 165, 250, 0.1);
+}
+
+.timeline-role-tag.painter {
+    color: #f472b6;
+    background: rgba(244, 114, 182, 0.1);
+}
+
+.timeline-role-tag.architect {
+    color: #a78bfa;
+    background: rgba(167, 139, 250, 0.1);
+}
+
+.timeline-role-tag.bricklayer {
+    color: #fb923c;
+    background: rgba(251, 146, 60, 0.1);
+}
+
+.timeline-role-tag.carpenter {
+    color: #d97706;
+    background: rgba(217, 119, 6, 0.1);
+}
+
+/* Marceneiro (Added) */
+.timeline-role-tag.carpenter {
+    color: #d97706;
+    background: rgba(217, 119, 6, 0.1);
+}
+
+/* --- Mobile Menu & Hamburger --- */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    z-index: 2000;
+}
+
+@media (max-width: 768px) {
+
+    /* Override Sidebar Layout */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 80%;
+        /* Wider on small screens */
+        max-width: 300px;
+        z-index: 1000;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+        display: flex;
+        /* Ensure flex layout is kept */
+        flex-direction: column;
+        padding-top: 60px;
+        /* Space for hamburger/close button */
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    /* Restore vertical links that might have been changed by previous media queries */
+    .nav-links {
+        flex-direction: column !important;
+        margin-top: 0 !important;
+        /* Spacing handled by sidebar padding now */
+    }
+
+    /* Show hamburger */
+    .menu-toggle {
+        display: block;
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        z-index: 2000;
+        /* Ensure on top of sidebar */
+    }
+
+    /* Adjust Top Bar */
+    .top-bar {
+        padding-left: 3.5rem;
+    }
+
+    /* Overlay */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 900;
+        backdrop-filter: blur(3px);
+    }
+
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    /* Mobile Dashboard adjustments */
+    .card {
+        padding: 1rem;
+        /* Reduce padding on mobile */
+    }
+
+    .timeline-view-split {
+        grid-template-columns: 1fr;
+        /* Force stack timeline */
+        padding-top: 2rem;
+        /* Space for hamburger */
+    }
+}

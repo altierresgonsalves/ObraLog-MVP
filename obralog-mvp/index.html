@@ -171,8 +171,7 @@
                         </div>
 
                         <h4 style="margin-bottom:1rem; font-size:1rem;">Etapas e Escopo</h4>
-                        <div id="stages-container" class="form-group"
-                            style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem;">
+                        <div id="stages-container" class="form-group stages-grid">
                             <!-- Standard Stages -->
                             <label
                                 style="display:flex; align-items:center; gap:0.5rem; background:rgba(255,255,255,0.05); padding:0.5rem; border-radius:4px; cursor:pointer;">
@@ -213,7 +212,8 @@
                         <div class="form-group">
                             <label>Projeto Arquitetônico Principal</label>
                             <div class="file-upload-area" onclick="document.getElementById('project-files').click()">
-                                <input type="file" id="project-files" multiple style="display:none">
+                                <input type="file" id="project-files" multiple style="display:none"
+                                    onchange="displaySelectedFiles(this)">
                                 <span class="file-upload-icon">📁</span>
                                 <span class="file-upload-text">Upload da Planta Baixa / Croqui</span>
                                 <div id="selected-project-files"
