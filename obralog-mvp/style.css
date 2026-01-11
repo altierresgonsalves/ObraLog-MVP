@@ -473,7 +473,7 @@ body {
     color: var(--text-muted);
 }
 
-.form-group input,
+.form-group input:not([type="checkbox"]):not([type="radio"]),
 .form-group textarea {
     width: 100%;
     padding: 0.75rem;
@@ -798,6 +798,17 @@ body {
     .card {
         padding: 1rem;
         /* Reduce padding on mobile */
+    }
+
+    /* Fix Grid Overflow */
+    .grid {
+        grid-template-columns: 1fr;
+        /* Force single column, ignores minmax(300px) */
+    }
+
+    /* Reduce Content Padding */
+    #content-area {
+        padding: 0 1rem 1rem;
     }
 
     .timeline-view-split {
