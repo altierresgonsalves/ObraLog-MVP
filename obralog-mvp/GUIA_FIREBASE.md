@@ -41,8 +41,21 @@ Para transformar o ObraLog em um aplicativo real com login e banco de dados, pre
 3. Na aba *Sign-in method*, clique em **E-mail/Senha**.
 4. Ative a primeira opção (**Ativar**) e clique em **Salvar**.
 
+
 ---
-Assim que você completar esses passos e me enviar o `firebaseConfig`, eu irei:
-1. Instalar o SDK do Firebase no código.
-2. Configurar a tela de Login Real.
-3. Migrar seus dados locais para a nuvem.
+## Status da Integração
+
+### Tarefas do Usuário (Configuração no Console)
+- [x] 1. Criar o Projeto no Firebase Console.
+- [x] 2. Registrar o App Web e obter `firebaseConfig`.
+- [x] 3. Criar o Banco de Dados (Firestore) em modo de teste.
+- [x] 4. Ativar Login (Authentication) com E-mail/Senha.
+
+### Tarefas de Desenvolvimento (Realizadas)
+- [x] 1. Instalar o SDK do Firebase no código (index.html).
+- [x] 2. Configurar a tela de Login Real e Autenticação (app.js).
+- [x] 3. Conectar Banco de Dados (Firestore) para ler/escrever obras (app.js).
+- [x] 4. Configurar Upload de Arquivos (Storage) para fotos e documentos (app.js - handleAddUpdate/handleCreateWork).
+
+**Status Final:** Integração concluída. O aplicativo agora utiliza dados reais na nuvem.
+

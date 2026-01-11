@@ -1,84 +1,6 @@
-// Mock Data Initial State (Fallback)
-const defaultDb = {
-    works: [
-        {
-            id: 1,
-            client: 'Residência Família Silva',
-            address: 'Rua das Magnólias, 45 - Jardins',
-            status: 'Em Andamento',
-            progress: 65,
-            startDate: '2023-11-15',
-            stages: {
-                bricklayer: { label: 'Alvenaria', active: true, progress: 100 },
-                electrician: { label: 'Elétrica', active: true, progress: 60 },
-                plumber: { label: 'Hidráulica', active: true, progress: 40 },
-                painter: { label: 'Pintura', active: true, progress: 10 }
-            }
-        },
-        {
-            id: 2,
-            client: 'Reforma Apto 502',
-            address: 'Av. Paulista, 1000',
-            status: 'Planejamento',
-            progress: 10,
-            startDate: '2024-02-01',
-            stages: {
-                bricklayer: { label: 'Alvenaria', active: true, progress: 0 },
-                painter: { label: 'Pintura', active: true, progress: 0 }
-            }
-        },
-        {
-            id: 3,
-            client: 'Área Gourmet Oliveira',
-            address: 'R. Vergueiro, 780',
-            status: 'Concluído',
-            progress: 100,
-            startDate: '2023-08-10',
-            stages: {
-                bricklayer: { label: 'Alvenaria', active: true, progress: 100 }
-            }
-        }
-    ],
-    timeline: [
-        {
-            id: 1,
-            date: '2024-01-09',
-            title: 'Instalação Elétrica',
-            description: 'Conclusão da passagem de fios no segundo andar e instalação de caixas de passagem.',
-            type: 'progress',
-            hasMedia: true,
-            mediaCount: 3,
-            author: 'Carlos Eletricista',
-            role: 'electrician'
-        },
-        {
-            id: 2,
-            date: '2024-01-05',
-            title: 'Revestimento Banheiros',
-            description: 'Início do assentamento de porcelanato nos banheiros da suíte master.',
-            type: 'progress',
-            hasMedia: true,
-            mediaCount: 2,
-            author: 'Marcos Pedreiro',
-            role: 'bricklayer'
-        },
-        {
-            id: 3,
-            date: '2023-12-20',
-            title: 'Alvenaria Concluída',
-            description: 'Finalização de todas as paredes divisórias do primeiro pavimento.',
-            type: 'milestone',
-            hasMedia: false,
-            author: 'Eng. Ana',
-            role: 'architect'
-        }
-    ]
-};
-
 // Load from LocalStorage or use Default
-// With Firestore, `db.works` will be populated by the listener. `db.timeline` will remain as mock for now.
-// With Firestore, `db.works` will be populated by the listener. `db.timeline` will remain as mock for now.
-let db = { works: [], timeline: defaultDb.timeline };
+let db = { works: [], timeline: [] };
+let unsubscribeWorks = null;
 
 // Mobile Sidebar Toggle
 function toggleSidebar() {
@@ -113,7 +35,13 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("User logged out");
             authScreen.style.display = 'flex';
             appScreen.style.display = 'none';
-            db.works = []; // Clear local data
+
+            // Cleanup Data and Listeners
+            db.works = [];
+            if (unsubscribeWorks) {
+                unsubscribeWorks();
+                unsubscribeWorks = null;
+            }
         }
     });
 });
@@ -160,8 +88,13 @@ function init() {
 }
 
 function loadData() {
+    // Avoid duplicate listeners
+    if (unsubscribeWorks) {
+        unsubscribeWorks();
+    }
+
     // Real-time listener from Firestore
-    worksCollection.orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
+    unsubscribeWorks = worksCollection.orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
         db.works = [];
         snapshot.forEach((doc) => {
             db.works.push({ id: doc.id, ...doc.data() });
@@ -171,7 +104,10 @@ function loadData() {
         renderSidebar();
     }, (error) => {
         console.error("Error loading works: ", error);
-        alert("Erro ao carregar obras. Verifique sua conexão.");
+        // Only alert if it's not a permission error caused by logging out mid-request
+        if (error.code !== 'permission-denied') {
+            alert("Erro ao carregar obras. Verifique sua conexão.");
+        }
     });
 }
 
@@ -236,7 +172,7 @@ function renderSidebar() {
     const activeWorks = db.works.filter(w => w.status === 'Em Andamento');
     activeList.innerHTML = activeWorks.length ? activeWorks.map(w => `
         <li class="${currentState.activeWorkId === w.id && currentState.view === 'timeline' ? 'active' : ''}" 
-            onclick="navigateTo('timeline', ${w.id})">
+            onclick="navigateTo('timeline', '${w.id}')">
             • ${w.client}
         </li>
     `).join('') : '<li style="padding:0.5rem; font-style:italic;">Nenhuma obra ativa</li>';
@@ -302,7 +238,7 @@ function renderDashboard() {
                             <span style="font-size:0.8rem; color:var(--text-muted)">${formatDate(work.startDate)}</span>
                         </div>
                         ${currentState.mode === 'admin' ? `
-                        <button onclick="requestDelete(${work.id}, event)" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; padding:4px;" title="Excluir Obra">
+                        <button onclick="requestDelete('${work.id}', event)" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; padding:4px;" title="Excluir Obra">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                         </button>` : ''}
                     </div>
@@ -320,7 +256,7 @@ function renderDashboard() {
                     </div>
 
                     <div class="meta">
-                        <button class="btn-secondary" style="width:100%; justify-content:center; padding: 0.5rem;" onclick="navigateTo('timeline', ${work.id})">
+                        <button class="btn-secondary" style="width:100%; justify-content:center; padding: 0.5rem;" onclick="navigateTo('timeline', '${work.id}')">
                             Ver Detalhes
                         </button>
                     </div>
@@ -380,8 +316,9 @@ function renderTimeline(work) {
                 
                 <h4 style="margin-bottom:0.5rem; font-size:0.9rem; color:var(--text-muted);">Arquivos do Projeto</h4>
                 <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
-                     <a href="#" class="doc-badge">📄 Planta Baixa.pdf</a>
-                     <a href="#" class="doc-badge">📐 Croqui Inicial.png</a>
+                     ${work.projectFiles && work.projectFiles.length > 0 ? work.projectFiles.map(file => `
+                        <a href="${file.url}" target="_blank" class="doc-badge">📄 ${file.name}</a>
+                     `).join('') : '<span style="font-size:0.8rem; color:var(--text-muted)">Nenhum arquivo anexado.</span>'}
                 </div>
             </aside>
 
@@ -397,7 +334,7 @@ function renderTimeline(work) {
                 </div>
 
                 <div class="timeline-container">
-                    ${db.timeline.map(item => `
+                    ${(work.updates || []).sort((a, b) => new Date(b.date) - new Date(a.date)).map(item => `
                         <div class="timeline-item">
                             <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
                                 <div class="timeline-date" style="min-width:auto;">${formatDate(item.date)}</div>
@@ -412,7 +349,12 @@ function renderTimeline(work) {
                                 <p>${item.description}</p>
                                 ${item.hasMedia ? `
                                     <div class="timeline-media-grid">
-                                        ${Array(item.mediaCount).fill(0).map((_, i) => `
+                                        ${item.photos ? item.photos.map(url => `
+                                            <div class="media-item">
+                                                <img src="${url}" alt="Foto da obra" onclick="window.open(this.src, '_blank')" style="cursor:pointer">
+                                            </div>
+                                        `).join('') :
+                Array(item.mediaCount || 0).fill(0).map((_, i) => `
                                             <div class="media-item">
                                                 <img src="https://source.unsplash.com/random/200x200?construction,site&sig=${item.id}${i}" alt="Foto da obra">
                                             </div>
@@ -421,7 +363,7 @@ function renderTimeline(work) {
                                 ` : ''}
                             </div>
                         </div>
-                    `).join('')}
+                    `).join('') || '<div class="timeline-item" style="justify-content:center; opacity:0.7"><p>Nenhuma atualização registrada nesta obra.</p></div>'}
                      <div class="timeline-item" style="border-style:dashed; opacity:0.5; justify-content:center;">
                         <p>Início da Obra</p>
                     </div>
@@ -433,12 +375,32 @@ function renderTimeline(work) {
 
 // Helpers
 function getRoleName(role) {
-    const roles = { 'architect': 'Arquiteto', 'electrician': 'Eletricista', 'plumber': 'Encanador', 'bricklayer': 'Pedreiro', 'painter': 'Pintor', 'carpenter': 'Marceneiro' };
-    return roles[role] || 'Profissional';
+    const roles = {
+        'architect': 'Arquiteto',
+        'electrician': 'Eletricista',
+        'plumber': 'Encanador',
+        'bricklayer': 'Pedreiro',
+        'painter': 'Pintor',
+        'carpenter': 'Marceneiro',
+        'plasterer': 'Gesseiro',
+        'glazier': 'Vidraceiro',
+        'locksmith': 'Serralheiro'
+    };
+    return roles[role] || role; // Return role key if no match, instead of just 'Profissional'
 }
 
 function getRoleIcon(role) {
-    const icons = { 'architect': '📐', 'electrician': '⚡', 'plumber': '💧', 'bricklayer': '🧱', 'painter': '🖌️', 'carpenter': '🪚' };
+    const icons = {
+        'architect': '📐',
+        'electrician': '⚡',
+        'plumber': '💧',
+        'bricklayer': '🧱',
+        'painter': '🖌️',
+        'carpenter': '🪚',
+        'plasterer': '🏗️',
+        'glazier': '🪟',
+        'locksmith': '🔐'
+    };
     return icons[role] || '👤';
 }
 
@@ -477,7 +439,11 @@ function populateRoleDropdown() {
         { val: 'bricklayer', label: 'Pedreiro / Alvenaria' },
         { val: 'electrician', label: 'Eletricista' },
         { val: 'plumber', label: 'Encanador / Hidráulica' },
-        { val: 'painter', label: 'Pintor' }
+        { val: 'painter', label: 'Pintor' },
+        { val: 'carpenter', label: 'Marceneiro / Carpinteiro' },
+        { val: 'plasterer', label: 'Gesseiro' },
+        { val: 'glazier', label: 'Vidraceiro' },
+        { val: 'locksmith', label: 'Serralheiro' }
     ];
 
     // Clear and re-add default empty option
